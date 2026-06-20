@@ -79,13 +79,16 @@
             align-items: center;
             z-index: 100;
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s step-end;
         }
 
         .modal-overlay.active {
             opacity: 1;
+            visibility: visible;
             pointer-events: auto;
+            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s step-start;
         }
 
         /* Modal Card */
@@ -104,7 +107,7 @@
                 inset 0 1px 2px rgba(255, 255, 255, 0.15),
                 0 0 40px rgba(99, 102, 241, 0.08);
             transform: scale(0.92) translateY(15px);
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             display: flex;
             flex-direction: column;
@@ -302,12 +305,12 @@
             background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
             color: #ffffff;
             border: none;
-            border-radius: 16px;
-            padding: 14px 28px;
-            font-size: 13px;
+            border-radius: 18px;
+            padding: 16px 32px;
+            font-size: 14px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
             cursor: pointer;
             box-shadow: 0 4px 15px var(--accent-glow);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -482,8 +485,11 @@
             }
 
             .start-btn {
-                padding: 12px 24px;
-                font-size: 12px;
+                padding: 16px 32px;
+                font-size: 14.5px;
+                border-radius: 18px;
+                font-weight: 800;
+                letter-spacing: 1.2px;
             }
 
             .control-panel {
@@ -529,16 +535,10 @@
         </iframe>
     </div>
 
-    <!-- Floating Action Panel (Top-Right) -->
     <div class="control-panel">
-        <button class="round-btn hidden" onclick="toggleModal()" id="menu-btn" data-tooltip="Informasi & Petunjuk" aria-label="Buka Menu">
+        <button class="round-btn hidden" onclick="toggleModal()" ontouchstart="toggleModal(); event.preventDefault();" id="menu-btn" data-tooltip="Informasi & Petunjuk" aria-label="Buka Menu">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-        </button>
-        <button class="round-btn" onclick="toggleFullscreen()" data-tooltip="Layar Penuh" aria-label="Toggle Fullscreen">
-            <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
             </svg>
         </button>
     </div>
@@ -546,7 +546,7 @@
     <!-- Modal Overlay -->
     <div class="modal-overlay" id="info-modal">
         <div class="modal-card">
-            <button class="modal-close-btn" onclick="toggleModal()" aria-label="Close">
+            <button class="modal-close-btn" onclick="toggleModal()" ontouchstart="toggleModal(); event.preventDefault();" aria-label="Close">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -601,7 +601,7 @@
                 </div>
             </div>
             
-            <button class="start-btn" onclick="toggleModal()">
+            <button class="start-btn" onclick="toggleModal()" ontouchstart="toggleModal(); event.preventDefault();">
                 Mulai Eksplorasi
             </button>
         </div>
@@ -620,54 +620,7 @@
             }
         }
 
-        // Fullscreen API implementation
-        function toggleFullscreen() {
-            if (!document.fullscreenElement && 
-                !document.mozFullScreenElement && 
-                !document.webkitFullscreenElement && 
-                !document.msFullscreenElement) {
-                const el = document.documentElement;
-                if (el.requestFullscreen) {
-                    el.requestFullscreen();
-                } else if (el.msRequestFullscreen) {
-                    el.msRequestFullscreen();
-                } else if (el.mozRequestFullScreen) {
-                    el.mozRequestFullScreen();
-                } else if (el.webkitRequestFullscreen) {
-                    el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
-            }
-        }
 
-        // Update fullscreen icon dynamically based on state
-        function updateFullscreenIcon() {
-            const icon = document.getElementById('fullscreen-icon');
-            const isFullscreen = document.fullscreenElement || 
-                                 document.mozFullScreenElement || 
-                                 document.webkitFullscreenElement || 
-                                 document.msFullscreenElement;
-            
-            if (isFullscreen) {
-                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3 3m12 6V4.5M15 9h4.5M15 9l6-6M9 15v4.5M9 15H4.5M9 15l-6 6m12-6v4.5M15 15h4.5M15 15l6 6" />`;
-            } else {
-                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />`;
-            }
-        }
-
-        document.addEventListener('fullscreenchange', updateFullscreenIcon);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
-        document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
-        document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
 
         // Show modal and handle click-outside behavior on load
         window.addEventListener('DOMContentLoaded', () => {
