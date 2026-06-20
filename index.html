@@ -54,6 +54,8 @@
             height: 100%;
             z-index: 1;
             background-color: transparent;
+            pointer-events: auto !important;
+            -webkit-overflow-scrolling: touch;
         }
 
         .viewer-container iframe {
@@ -62,6 +64,7 @@
             border: none;
             outline: none;
             display: block;
+            pointer-events: auto !important;
         }
 
         /* Modal Overlay (Glassmorphism Dimmer) */
@@ -74,21 +77,22 @@
             background: rgba(4, 7, 13, 0.55);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            display: flex;
+            display: none; /* Completely hidden from render tree when inactive */
             justify-content: center;
             align-items: center;
             z-index: 100;
             opacity: 0;
-            visibility: hidden;
             pointer-events: none;
-            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s step-end;
+            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.show {
+            display: flex;
         }
 
         .modal-overlay.active {
             opacity: 1;
-            visibility: visible;
             pointer-events: auto;
-            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s step-start;
         }
 
         /* Modal Card */
@@ -113,6 +117,19 @@
             flex-direction: column;
             gap: 20px;
             pointer-events: auto;
+            max-height: 85vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+        }
+
+        .modal-card::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .modal-card::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
         }
 
         .modal-overlay.active .modal-card {
@@ -444,13 +461,14 @@
         /* Media Queries for Mobile Devices (screens <= 640px) */
         @media (max-width: 640px) {
             .modal-card {
-                padding: 24px;
+                padding: 20px;
                 border-radius: 24px;
-                gap: 16px;
+                gap: 12px;
+                max-height: 90vh;
             }
 
             .modal-header {
-                gap: 8px;
+                gap: 6px;
             }
 
             h1 {
@@ -458,16 +476,34 @@
             }
 
             .modal-desc {
-                font-size: 12.5px;
+                font-size: 12px;
             }
 
             .meta-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
             }
 
             .meta-card {
                 padding: 10px 12px;
+                gap: 8px;
+            }
+
+            .meta-card svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            .meta-card-info {
+                gap: 1px;
+            }
+
+            .meta-card-label {
+                font-size: 9px;
+            }
+
+            .meta-card-value {
+                font-size: 11px;
             }
 
             .instruction-grid {
@@ -475,21 +511,26 @@
             }
 
             .instruction-chip {
-                padding: 10px 6px;
-                font-size: 10px;
+                padding: 10px 4px;
+                font-size: 9.5px;
                 border-radius: 12px;
+                gap: 4px;
             }
 
             .instruction-chip strong {
-                font-size: 11px;
+                font-size: 10.5px;
+            }
+
+            .instruction-chip .icon {
+                font-size: 16px;
             }
 
             .start-btn {
-                padding: 16px 32px;
-                font-size: 14.5px;
-                border-radius: 18px;
+                padding: 14px 28px;
+                font-size: 13.5px;
+                border-radius: 16px;
                 font-weight: 800;
-                letter-spacing: 1.2px;
+                letter-spacing: 1px;
             }
 
             .control-panel {
@@ -530,13 +571,13 @@
         <!-- Reverted src to original clean URL to prevent QR redirection issues on mobile -->
         <iframe 
             src="https://viewer.assemblrworld.com/Embed/-SjrzpEeWJCwgEXP2ke5" 
-            allow="camera; microphone; gyroscope; accelerometer; magnetometer; xr-spatial-tracking; fullscreen" 
+            allow="autoplay; camera; microphone; gyroscope; accelerometer; magnetometer; xr-spatial-tracking; fullscreen" 
             allowFullScreen>
         </iframe>
     </div>
 
     <div class="control-panel">
-        <button class="round-btn hidden" onclick="toggleModal()" ontouchstart="toggleModal(); event.preventDefault();" id="menu-btn" data-tooltip="Informasi & Petunjuk" aria-label="Buka Menu">
+        <button class="round-btn hidden" id="menu-btn" data-tooltip="Informasi & Petunjuk" aria-label="Buka Menu">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
@@ -546,7 +587,7 @@
     <!-- Modal Overlay -->
     <div class="modal-overlay" id="info-modal">
         <div class="modal-card">
-            <button class="modal-close-btn" onclick="toggleModal()" ontouchstart="toggleModal(); event.preventDefault();" aria-label="Close">
+            <button class="modal-close-btn" aria-label="Close">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -601,7 +642,7 @@
                 </div>
             </div>
             
-            <button class="start-btn" onclick="toggleModal()" ontouchstart="toggleModal(); event.preventDefault();">
+            <button class="start-btn">
                 Mulai Eksplorasi
             </button>
         </div>
@@ -611,23 +652,39 @@
         function toggleModal() {
             const modal = document.getElementById('info-modal');
             const menuBtn = document.getElementById('menu-btn');
-            modal.classList.toggle('active');
             
             if (modal.classList.contains('active')) {
-                menuBtn.classList.add('hidden');
-            } else {
+                // Close modal: fade out first
+                modal.classList.remove('active');
                 menuBtn.classList.remove('hidden');
+                
+                // Wait for the transition to finish, then display: none
+                setTimeout(() => {
+                    if (!modal.classList.contains('active')) {
+                        modal.classList.remove('show');
+                    }
+                }, 250);
+            } else {
+                // Open modal: display flex first
+                modal.classList.add('show');
+                // Force browser reflow to play transition
+                modal.offsetWidth;
+                modal.classList.add('active');
+                menuBtn.classList.add('hidden');
             }
         }
-
-
 
         // Show modal and handle click-outside behavior on load
         window.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('info-modal');
             const menuBtn = document.getElementById('menu-btn');
+            const startBtn = document.querySelector('.start-btn');
+            const closeBtn = document.querySelector('.modal-close-btn');
             
             if (modal && menuBtn) {
+                // Initialize open state with reflow
+                modal.classList.add('show');
+                modal.offsetWidth;
                 modal.classList.add('active');
                 menuBtn.classList.add('hidden');
                 
@@ -637,6 +694,30 @@
                     }
                 });
             }
+
+            // Bind triggers safely for both desktop click and mobile touch
+            const bindTrigger = (btn) => {
+                if (!btn) return;
+                
+                let triggered = false;
+                
+                const handler = (e) => {
+                    e.preventDefault();
+                    if (triggered) return;
+                    triggered = true;
+                    // Debounce to avoid double triggers
+                    setTimeout(() => { triggered = false; }, 300);
+                    
+                    toggleModal();
+                };
+                
+                btn.addEventListener('touchend', handler, { passive: false });
+                btn.addEventListener('click', handler);
+            };
+
+            bindTrigger(menuBtn);
+            bindTrigger(startBtn);
+            bindTrigger(closeBtn);
         });
 
         // Dummy listener to fix iOS Safari iframe click bug
