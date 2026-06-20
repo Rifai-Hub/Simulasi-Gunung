@@ -64,41 +64,100 @@
             display: block;
         }
 
-        /* Floating Info Card (Glassmorphism) */
-        .floating-card {
-            position: absolute;
-            top: 24px;
-            left: 24px;
-            z-index: 10;
-            width: 340px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(24px) saturate(170%);
-            -webkit-backdrop-filter: blur(24px) saturate(170%);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 
-                        0 0 0 1px var(--glass-border),
-                        inset 0 1px 2px rgba(255, 255, 255, 0.1);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            transform-origin: top left;
-            pointer-events: auto;
-            touch-action: manipulation;
-        }
-
-        .floating-card:hover {
-            border-color: rgba(99, 102, 241, 0.25);
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 
-                        0 0 25px var(--glass-glow),
-                        inset 0 1px 2px rgba(255, 255, 255, 0.15);
-        }
-
-        .card-header {
+        /* Modal Overlay (Glassmorphism Dimmer) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(4, 7, 13, 0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 16px;
-            width: 100%;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Modal Card */
+        .modal-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 36px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 
+                0 30px 70px rgba(0, 0, 0, 0.7), 
+                0 0 0 1px var(--glass-border),
+                inset 0 1px 2px rgba(255, 255, 255, 0.15),
+                0 0 40px rgba(99, 102, 241, 0.08);
+            transform: scale(0.92) translateY(15px);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            outline: none;
+            z-index: 10;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+
+        .modal-close-btn:active {
+            transform: scale(0.95);
+        }
+
+        .modal-close-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .modal-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            margin-bottom: 4px;
         }
 
         .tag-badge {
@@ -110,160 +169,168 @@
             padding: 5px 12px;
             border-radius: 20px;
             box-shadow: 0 4px 12px var(--accent-glow);
-            display: inline-block;
             color: #ffffff;
-        }
-
-        /* Minimize / Toggle Card Button */
-        .toggle-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--glass-border);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-primary);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            outline: none;
-            pointer-events: auto;
-            touch-action: manipulation;
-        }
-
-        .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: scale(1.08);
-        }
-
-        .toggle-btn:active {
-            transform: scale(0.95);
-        }
-
-        .toggle-btn svg {
-            width: 16px;
-            height: 16px;
-            transition: transform 0.3s ease;
-        }
-
-        /* Card Content Area */
-        .card-content {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            opacity: 1;
-            max-height: 500px;
-            overflow: hidden;
+            display: inline-block;
         }
 
         h1 {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 800;
             line-height: 1.25;
-            margin-bottom: 8px;
             background: linear-gradient(to right, #ffffff, #e2e8f0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
         }
 
-        .card-desc {
-            font-size: 13px;
+        .modal-desc {
+            font-size: 13.5px;
             color: var(--text-secondary);
-            line-height: 1.5;
-            margin-bottom: 16px;
+            line-height: 1.55;
         }
 
-        .meta-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        /* Meta Grid Card (Fase & Penyusun) */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
-        .meta-item {
+        .meta-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 12px 14px;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 13px;
-            color: var(--text-secondary);
+            transition: all 0.3s ease;
         }
 
-        .meta-item strong {
-            color: var(--text-primary);
-            font-weight: 600;
+        .meta-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(99, 102, 241, 0.25);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .meta-item svg {
-            width: 16px;
-            height: 16px;
+        .meta-card svg {
+            width: 20px;
+            height: 20px;
             color: var(--accent-end);
             opacity: 0.9;
             flex-shrink: 0;
         }
 
-        /* Interactive Instruction Box inside Info Card */
-        .instruction-box {
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        .meta-card-info {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 2px;
+            text-align: left;
+        }
+
+        .meta-card-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-secondary);
+        }
+
+        .meta-card-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Instruction Box & Grid */
+        .instruction-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
         }
 
         .instruction-box h3 {
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--accent-end);
             margin-bottom: 2px;
         }
 
-        .instruction-step {
+        .instruction-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .instruction-chip {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 12px 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .instruction-chip:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .instruction-chip strong {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .instruction-chip .icon {
+            font-size: 18px;
+        }
+
+        /* Start Button */
+        .start-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 28px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 12.5px;
-            color: var(--text-secondary);
-            line-height: 1.4;
+            justify-content: center;
+            gap: 8px;
+            outline: none;
         }
 
-        .instruction-step .icon {
-            font-size: 14px;
-            width: 18px;
-            text-align: center;
-            opacity: 0.95;
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--accent-glow), 0 0 0 2px rgba(255, 255, 255, 0.1);
         }
 
-        /* Collapsed Info Card State */
-        .floating-card.collapsed {
-            width: 60px;
-            height: 60px;
-            padding: 11px;
-            overflow: hidden;
-            border-radius: 30px;
+        .start-btn:active {
+            transform: translateY(0);
         }
 
-        .floating-card.collapsed .card-content {
-            opacity: 0;
-            max-height: 0;
-            pointer-events: none;
-            margin-top: 0;
-        }
-
-        .floating-card.collapsed .toggle-btn {
-            transform: rotate(180deg);
-            background: transparent;
-            border-color: transparent;
-            width: 100%;
-            height: 100%;
-        }
-
-        .floating-card.collapsed .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
+        .start-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2.5;
         }
 
         /* Floating Controls (Top-Right) */
@@ -294,7 +361,7 @@
             color: var(--text-secondary);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
                         inset 0 1px 1px rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             outline: none;
             position: relative;
             pointer-events: auto;
@@ -319,11 +386,29 @@
             transition: transform 0.2s ease;
         }
 
+        /* Menu Button specific transition */
+        #menu-btn {
+            opacity: 1;
+            transform: scale(1);
+            width: 48px;
+            overflow: hidden;
+        }
+
+        #menu-btn.hidden {
+            opacity: 0;
+            transform: scale(0.5);
+            width: 0;
+            padding: 0;
+            border-width: 0;
+            margin-right: -12px;
+            pointer-events: none;
+        }
+
         /* Tooltips for desktop buttons */
         .round-btn::after {
             content: attr(data-tooltip);
             position: absolute;
-            top: 60px; /* Positioned below button */
+            top: 60px;
             right: 0;
             background: #0f172a;
             color: #f8fafc;
@@ -345,68 +430,62 @@
             transform: translateY(0);
         }
 
-        /* Media Queries for Tablet Devices (e.g. iPad, screens <= 1024px) */
+        /* Media Queries for Tablet/Small Desktop (screens <= 1024px) */
         @media (max-width: 1024px) {
-            .floating-card {
-                top: 20px;
-                left: 20px;
-                width: 310px;
-                padding: 20px;
-            }
             .control-panel {
                 top: 20px;
                 right: 20px;
             }
         }
 
-        /* Media Queries for Mobile Devices (e.g. phones, screens <= 640px) */
+        /* Media Queries for Mobile Devices (screens <= 640px) */
         @media (max-width: 640px) {
-            .floating-card {
-                top: 16px;
-                left: 16px;
-                width: calc(100% - 92px);
-                max-width: none;
-                padding: 16px;
-                border-radius: 20px;
-                transform-origin: top left;
+            .modal-card {
+                padding: 24px;
+                border-radius: 24px;
+                gap: 16px;
             }
 
-            .floating-card.collapsed {
-                width: 52px;
-                height: 52px;
-                padding: 8px;
-                border-radius: 26px;
-            }
-
-            .card-header {
-                margin-bottom: 12px;
+            .modal-header {
+                gap: 8px;
             }
 
             h1 {
-                font-size: 18px;
+                font-size: 20px;
             }
 
-            .card-desc {
+            .modal-desc {
+                font-size: 12.5px;
+            }
+
+            .meta-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .meta-card {
+                padding: 10px 12px;
+            }
+
+            .instruction-grid {
+                gap: 6px;
+            }
+
+            .instruction-chip {
+                padding: 10px 6px;
+                font-size: 10px;
+                border-radius: 12px;
+            }
+
+            .instruction-chip strong {
+                font-size: 11px;
+            }
+
+            .start-btn {
+                padding: 12px 24px;
                 font-size: 12px;
-                margin-bottom: 12px;
             }
 
-            .meta-info {
-                padding-top: 10px;
-                gap: 6px;
-            }
-
-            .instruction-box {
-                margin-top: 10px;
-                padding-top: 10px;
-                gap: 6px;
-            }
-
-            .instruction-step {
-                font-size: 11.5px;
-            }
-
-            /* Bottom layout on mobile */
             .control-panel {
                 top: 16px;
                 right: 16px;
@@ -421,6 +500,14 @@
             .round-btn svg {
                 width: 18px;
                 height: 18px;
+            }
+
+            #menu-btn {
+                width: 44px;
+            }
+
+            #menu-btn.hidden {
+                margin-right: -8px;
             }
 
             /* Tooltips behave poorly on touch devices, hide them */
@@ -442,62 +529,13 @@
         </iframe>
     </div>
 
-    <!-- Floating Glassmorphism Information Card (Top-Left) -->
-    <div class="floating-card collapsed" id="info-card">
-        <div class="card-header">
-            <span class="tag-badge">Visualisator 3D</span>
-            <button class="toggle-btn" onclick="toggleCard()" id="toggle-trigger" aria-label="Minimize panel">
-                <!-- SVG Icon for Minimize/Chevron Down (Since it starts collapsed) -->
-                <svg id="chevron-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
-            </button>
-        </div>
-        <div class="card-content" id="card-content">
-            <h1>Transformasi Fungsi</h1>
-            <p class="card-desc">
-                Media pembelajaran interaktif berbasis model 3D spasial untuk memahami pergeseran (translasi), pencerminan (refleksi), peregangan (dilatasi), dan perputaran (rotasi) grafik fungsi matematika.
-            </p>
-            
-            <div class="meta-info">
-                <div class="meta-item">
-                    <!-- Graduation Cap Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 019.918 5.842 50.45 50.45 0 00-2.658.814m-15.482 0a50.503 50.503 0 0115.483 0m-15.483 0L12 10.147l7.73-4.31" />
-                    </svg>
-                    <span>Kelas: <strong>Fase F / Kelas XI</strong></span>
-                </div>
-                <div class="meta-item">
-                    <!-- User Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                    </svg>
-                    <span>Penyusun: <strong>Agus Purnama</strong></span>
-                </div>
-            </div>
-
-            <!-- Integrated Control/Interaction Instructions -->
-            <div class="instruction-box">
-                <h3>Petunjuk Kontrol:</h3>
-                <div class="instruction-step">
-                    <span class="icon">🖱️</span>
-                    <span><strong>Putar:</strong> Geser 1 jari / klik-kiri & seret</span>
-                </div>
-                <div class="instruction-step">
-                    <span class="icon">🔍</span>
-                    <span><strong>Zoom:</strong> Cubit layar / scroll mouse</span>
-                </div>
-                <div class="instruction-step">
-                    <span class="icon">✋</span>
-                    <span><strong>Geser:</strong> Geser 2 jari / klik-kanan & seret</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Floating Action Panel (Top-Right) -->
     <div class="control-panel">
-        <!-- Fullscreen Button Only (Removed custom Reset button to avoid Assemblr mobile QR code page trigger) -->
+        <button class="round-btn hidden" onclick="toggleModal()" id="menu-btn" data-tooltip="Informasi & Petunjuk" aria-label="Buka Menu">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+        </button>
         <button class="round-btn" onclick="toggleFullscreen()" data-tooltip="Layar Penuh" aria-label="Toggle Fullscreen">
             <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
@@ -505,19 +543,80 @@
         </button>
     </div>
 
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal-card">
+            <button class="modal-close-btn" onclick="toggleModal()" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="modal-header">
+                <span class="tag-badge">Visualisator 3D</span>
+                <h1>Transformasi Fungsi</h1>
+                <p class="modal-desc">
+                    Media pembelajaran interaktif berbasis model 3D spasial untuk memahami pergeseran (translasi), pencerminan (refleksi), peregangan (dilatasi), dan perputaran (rotasi) grafik fungsi matematika.
+                </p>
+            </div>
+            
+            <div class="meta-grid">
+                <div class="meta-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 019.918 5.842 50.45 50.45 0 00-2.658.814m-15.482 0a50.503 50.503 0 0115.483 0m-15.483 0L12 10.147l7.73-4.31" />
+                    </svg>
+                    <div class="meta-card-info">
+                        <span class="meta-card-label">Kelas</span>
+                        <span class="meta-card-value">Fase F / XI</span>
+                    </div>
+                </div>
+                <div class="meta-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <div class="meta-card-info">
+                        <span class="meta-card-label">Penyusun</span>
+                        <span class="meta-card-value">Agus Purnama</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instruction-box">
+                <h3>Petunjuk Kontrol:</h3>
+                <div class="instruction-grid">
+                    <div class="instruction-chip">
+                        <span class="icon">🖱️</span>
+                        <strong>Putar</strong>
+                        <span>Drag / 1 Jari</span>
+                    </div>
+                    <div class="instruction-chip">
+                        <span class="icon">🔍</span>
+                        <strong>Zoom</strong>
+                        <span>Cubit / Scroll</span>
+                    </div>
+                    <div class="instruction-chip">
+                        <span class="icon">✋</span>
+                        <strong>Geser</strong>
+                        <span>Klik-Kanan / 2 Jari</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="start-btn" onclick="toggleModal()">
+                Mulai Eksplorasi
+            </button>
+        </div>
+    </div>
+
     <script>
-        function toggleCard() {
-            const card = document.getElementById('info-card');
-            const chevron = document.getElementById('chevron-icon');
+        function toggleModal() {
+            const modal = document.getElementById('info-modal');
+            const menuBtn = document.getElementById('menu-btn');
+            modal.classList.toggle('active');
             
-            card.classList.toggle('collapsed');
-            
-            if (card.classList.contains('collapsed')) {
-                // Change icon to chevron down (open button)
-                chevron.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />`;
+            if (modal.classList.contains('active')) {
+                menuBtn.classList.add('hidden');
             } else {
-                // Change icon to chevron up (close button)
-                chevron.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />`;
+                menuBtn.classList.remove('hidden');
             }
         }
 
@@ -527,7 +626,6 @@
                 !document.mozFullScreenElement && 
                 !document.webkitFullscreenElement && 
                 !document.msFullscreenElement) {
-                // Enter fullscreen
                 const el = document.documentElement;
                 if (el.requestFullscreen) {
                     el.requestFullscreen();
@@ -539,7 +637,6 @@
                     el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
                 }
             } else {
-                // Exit fullscreen
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.msExitFullscreen) {
@@ -561,29 +658,31 @@
                                  document.msFullscreenElement;
             
             if (isFullscreen) {
-                // SVG for exit fullscreen
                 icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3 3m12 6V4.5M15 9h4.5M15 9l6-6M9 15v4.5M9 15H4.5M9 15l-6 6m12-6v4.5M15 15h4.5M15 15l6 6" />`;
             } else {
-                // SVG for enter fullscreen
                 icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />`;
             }
         }
 
-        // Listen for fullscreen change events across different browsers
         document.addEventListener('fullscreenchange', updateFullscreenIcon);
         document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
         document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
         document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
 
-        // Expand the info card on desktop load
+        // Show modal and handle click-outside behavior on load
         window.addEventListener('DOMContentLoaded', () => {
-            const card = document.getElementById('info-card');
-            const chevron = document.getElementById('chevron-icon');
-            if (window.innerWidth > 640) {
-                if (card && card.classList.contains('collapsed')) {
-                    card.classList.remove('collapsed');
-                    chevron.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />`;
-                }
+            const modal = document.getElementById('info-modal');
+            const menuBtn = document.getElementById('menu-btn');
+            
+            if (modal && menuBtn) {
+                modal.classList.add('active');
+                menuBtn.classList.add('hidden');
+                
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        toggleModal();
+                    }
+                });
             }
         });
 
